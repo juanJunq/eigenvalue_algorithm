@@ -5,30 +5,37 @@ def Householder_To_Hessenberg(A):
     m, n = A.shape
     H = np.copy(A)
     
-    for k in range(m - 2):  # Fase 1: transformando A em Hessenberg
+    for k in range(m - 2):  # Fase 1: A -> Hessenberg superior ou tridiagonal
         x = H[k + 1:m, k]  # Vetor abaixo da diagonal
         v = np.copy(x)
         v[0] += np.sign(x[0]) * np.linalg.norm(x)
         v = v / np.linalg.norm(v)
         
-        I_k = np.eye(m - k - 1)  # Matriz identidade de dimensão (m-k-1)
-        Hk = np.eye(m)  # Inicializa uma matriz identidade de tamanho m
+        Hk = np.eye(m)  # Matriz identidade de dimensão (m)
         Hk[k + 1:m, k + 1:m] -= 2 * np.outer(v, v)  # Subtrai o refletor
 
-        # Refletor de Householder
-        H[k + 1:m, k:m] -= 2 * np.outer(v, np.dot(v.T, H[k + 1:m, k:m]))
+        F = np.eye(m)
+        F[k + 1:m, k + 1:m] = Hk[k + 1:m, k + 1:m]   # Refletor de Householder
+        
         print("Aplicando refletor a esquerda da matriz A: ")
+        H = F @ H
         print(H)
         print("\n")
-        H[0:m, k + 1:m] -= 2 * np.outer(np.dot(H[0:m, k + 1:m], v), v.T)
-        
+
+        print("Aplicando refletor a direita da matriz A: ")
+        H = H @ F.T
+        print(H)
+        print("\n")
         
 
         print(f"Refletor vk em {k+1}:")
         print(v)
-        print(f"Matriz refletora Hk em {k+1}:")
-        print(Hk)
         print("\n")
+
+        print(f"Matriz refletora Q{k+1}:")
+        print(F)
+        print("\n")
+        
         print(f"Matriz A{k+1}:")
         print(H)
         print("\n")
